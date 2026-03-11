@@ -407,3 +407,29 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
+// ── Mobile Hamburger ──────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const hamburger = document.getElementById('hamburger-btn');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+
+  function openSidebar() {
+    sidebar?.classList.add('sidebar--open');
+    overlay?.classList.add('sidebar-overlay--visible');
+  }
+
+  function closeSidebar() {
+    sidebar?.classList.remove('sidebar--open');
+    overlay?.classList.remove('sidebar-overlay--visible');
+  }
+
+  hamburger?.addEventListener('click', openSidebar);
+  overlay?.addEventListener('click', closeSidebar);
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+});
