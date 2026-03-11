@@ -78,6 +78,7 @@
 
     <!-- ── TOPBAR ────────────────────────────────────────────────────────────── -->
     <header class="topbar">
+      <button class="hamburger" id="hamburger-btn" aria-label="Menu">☰</button>
       <a class="topbar__logo" href="#" data-panel="home">
         <img src="favicon.svg" style="width:22px;height:22px;" alt="logo"/>
         Career Copilot
@@ -95,7 +96,8 @@
     </header>
 
     <!-- ── APP SHELL ─────────────────────────────────────────────────────────── -->
-    <div class="app">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <div class="app">
       <!-- SIDEBAR -->
       <nav class="sidebar">
         <p class="sidebar__section-label">Tools</p>
@@ -732,8 +734,7 @@
     <span style="font-size:var(--text-xs);color:var(--color-text-muted);">Built by Rahul Sharma · MIT License</span>
     <div style="display:flex;align-items:center;gap:var(--space-4);">
   
-  <a href="mailto:careercopilot04@gmail.com" target="_blank" rel="noopener"
-    style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;">
+  <a href="/cdn-cgi/l/email-protection#24474556414156474b544d484b501410644349454d480a474b49" target="_blank" rel="noopener" style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;">
     📩 Email Us
   </a>
       <a href="https://x.com/careercopilot04" target="_blank" rel="noopener"
@@ -753,6 +754,4 @@
     
 
     <!-- ES Modules — browser natively supports this, no bundler needed -->
-    <script type="module" src="src/app.js"></script>
-  </body>
-</html>
+    <script data-cfasync="false

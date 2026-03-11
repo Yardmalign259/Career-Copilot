@@ -1,24 +1,14 @@
 /**
  * groq.js — Groq API client
  * Single source of truth for all AI calls.
- * Kyun separate file: Agar API change ho (e.g. OpenAI se Groq),
- * sirf yeh ek file change karni padegi — baaki code untouched rahega.
  */
 
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'llama-3.3-70b-versatile';
-const MAX_TOKENS = 2000;
+const MAX_TOKENS = 3000;
 
-/**
- * Core Groq API call
- * @param {string} userPrompt
- * @param {string} systemPrompt
- * @param {string} apiKey
- * @returns {Promise<string>} - AI response text
- */
 async function callGroq(userPrompt, systemPrompt, apiKey) {
   if (!apiKey) throw new Error('API key missing');
-
   const messages = [];
   if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
   messages.push({ role: 'user', content: userPrompt });
@@ -29,155 +19,152 @@ async function callGroq(userPrompt, systemPrompt, apiKey) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({
-      model: MODEL,
-      messages,
-      max_tokens: MAX_TOKENS,
-      temperature: 0.7,
-    }),
+    body: JSON.stringify({ model: MODEL, messages, max_tokens: MAX_TOKENS, temperature: 0.7 }),
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    const msg = err?.error?.message || `HTTP ${res.status}`;
-    throw new Error(msg);
+    throw new Error(err?.error?.message || `HTTP ${res.status}`);
   }
-
   const data = await res.json();
   return data.choices[0].message.content;
 }
 
-// ── Prompts ─────────────────────────────────────────────────────────────────
-// Each function = one AI feature. Clean separation of concerns.
-
-/**
- * Analyze a resume for a given role
- */
+// ── Resume Analyzer ──────────────────────────────────────────────────────────
 export async function analyzeResume({ resumeText, targetRole, apiKey }) {
-  const system = `Tu ek expert career coach hai jo Indian freshers ki help karta hai ${targetRole} roles ke liye.
+  const system = `Tu ek world-class career coach aur ATS expert hai jo specifically Indian job market ke liye ${targetRole} roles mein specialize karta hai.
 
-Resume ka detailed analysis de in sections mein:
+Tere paas yeh deep knowledge hai:
+- Indian startup aur MNC hiring patterns 2024-25
+- ATS systems jo Indian companies use karti hain (Naukri, LinkedIn, Workday, Greenhouse)
+- ${targetRole} ke liye exact skills, keywords, aur experience jo recruiters dhundhte hain
+- Indian fresher resumes ki common mistakes
+
+Resume ko ek senior hiring manager ki tarah read kar jo ${targetRole} ke liye 100+ resumes dekh chuka ho. Har section mein SPECIFIC aur ACTIONABLE feedback de — generic advice bilkul mat de.
 
 ## ✅ Top 3 Strengths
-Kya acha hai is resume mein — specific cheezein batao
+Exactly kya strong hai — specific lines quote karke batao. Kyun yeh ${targetRole} ke liye valuable hai.
 
-## ⚠️ Top 3 Issues
-Kya weak hai — honest feedback do
+## ⚠️ Top 3 Critical Issues
+Sabse badi weaknesses jo rejection ka reason ban sakti hain. Specific section ka reference do.
 
 ## 📊 ATS Score: X/10
-Score aur 2 line explanation kyun
+Score + exact reasons — kaunse keywords missing hain, formatting issues, section names jo ATS parse nahi kar sakta.
 
-## ⚡ 3 Quick Fixes
-Aaj hi ye 3 cheezein change karo — exact suggestions do
+## ⚡ 3 Quick Fixes (Aaj Karo)
+Exact changes — copy-paste ready. "Yeh line hatao, yeh add karo" level ki specificity.
 
-## ✍️ Rewritten Bullets
-Koi bhi 2 bullets lo — before/after format mein strong ${targetRole} language mein rewrite karo
+## ✍️ Rewritten Bullets (Before → After)
+Resume se 3 weakest bullets lo aur ${targetRole} ke liye powerful metric-driven bullets mein rewrite karo.
+❌ Before: [original]
+✅ After: [action verb + metric + impact]
 
-Hinglish mein jawab de. Direct aur actionable rakh. No fluff.`;
+## 🎯 ${targetRole} — Role-Specific Gaps
+Is specific role ke liye kya missing hai — skills, tools, certifications, project types.
 
-  return callGroq(`Resume:\n${resumeText.slice(0, 3500)}`, system, apiKey);
+Hinglish mein jawab de. Depth rakh — surface level advice mat de. 70B model ka poora knowledge use kar.`;
+
+  return callGroq(`Target Role: ${targetRole}\n\nResume:\n${resumeText.slice(0, 4000)}`, system, apiKey);
 }
 
-/**
- * Match resume against a job description
- */
+// ── JD Matcher ───────────────────────────────────────────────────────────────
 export async function matchJD({ jdText, resumeText, apiKey }) {
-  const system = `Tu ek expert ATS specialist aur career coach hai Indian job market ke liye.
-Sirf resume aur JD ke beech ke gaps pe focus kar.
+  const system = `Tu ek expert ATS specialist aur recruiter hai jo Indian companies ke liye hiring karta hai.
 
-## ❌ Issues Found (JD ke hisaab se)
-JD se compare karke specific problems — kya missing hai, kya galat hai
+JD aur Resume ko line-by-line compare kar. Sirf gaps aur fixes pe focus kar.
 
-## 🔧 Corrections Required
-Har issue ke liye exact fix — copy-paste ready wording
+## ❌ Critical Mismatches
+JD mein explicitly maanga gaya hai lekin resume mein nahi — specific lines quote karo dono se.
 
-## 🔑 Missing Keywords
-JD ke important keywords jo resume mein nahi hain — priority order mein
+## 🔧 Exact Corrections Required
+Har mismatch ke liye exact wording jo resume mein add/change karni hai. Copy-paste ready.
 
-## 📝 Ready-to-Use Resume Lines
-3-4 bullet points jo seedha resume mein paste kar sako — JD ki language mein
+## 🔑 Missing Keywords (Priority Order)
+JD ke high-frequency keywords jo resume mein absent hain. ATS mein yeh reject karega.
+
+## 📝 3 Ready-to-Use Resume Lines
+JD ki exact language use karke 3 powerful bullets — seedha resume mein paste kar sako.
 
 ## 🎯 Match Score: XX%
-Honest score — last mein
+Honest score + ek line — main gap kya hai.
 
-Hinglish mein, laser focused. Koi extra cheez nahi.`;
+Hinglish mein. Laser focused — sirf JD vs Resume comparison. No generic advice.`;
 
   return callGroq(
-    `JOB DESCRIPTION:\n${jdText.slice(0, 2000)}\n\nRESUME:\n${resumeText.slice(0, 2500)}`,
-    system,
-    apiKey
+    `JOB DESCRIPTION:\n${jdText.slice(0, 2500)}\n\nRESUME:\n${resumeText.slice(0, 3000)}`,
+    system, apiKey
   );
 }
 
-/**
- * Generate a single interview question
- */
+// ── Interview Question Generator ─────────────────────────────────────────────
 export async function generateInterviewQuestion({ role, type, forceNew, count, apiKey }) {
   const newText = forceNew ? `\nIMPORTANT: Pichle se BILKUL alag question do. Count: ${count}` : '';
 
-  const system = `Tu ek experienced interviewer hai — ${role}, Indian startup. Type: ${type}.
-Sirf yeh 3 lines do:
-QUESTION: [specific real question]
-DIFFICULTY: [Easy/Medium/Hard]
-FOCUS: [kya assess — 4 words]`;
+  const system = `Tu ek senior interviewer hai jo ${role} ke liye Indian startups aur MNCs mein hiring karta hai. Type: ${type}.
 
-  return callGroq(`Role: ${role}\nType: ${type}${newText}`, system, apiKey);
+Real interviews mein jo questions actually pooche jaate hain woh do — not textbook questions.
+
+Sirf yeh 3 lines do, kuch extra nahi:
+QUESTION: [specific real-world question jo ${role} interviews mein commonly poochha jaata hai]
+DIFFICULTY: [Easy/Medium/Hard]
+FOCUS: [exactly kya assess ho raha hai — 4 words max]`;
+
+  return callGroq(`Role: ${role}\nInterview Type: ${type}${newText}`, system, apiKey);
 }
 
-/**
- * Evaluate candidate's answer and provide feedback + expected answer
- */
+// ── Answer Evaluator ──────────────────────────────────────────────────────────
 export async function evaluateAnswer({ question, answer, role, type, apiKey }) {
-  const system = `Tu ek strict but helpful interviewer hai — ${role}, ${type}.
+  const system = `Tu ek strict but helpful ${role} interviewer hai jo Indian job market ke liye candidates evaluate karta hai.
+
+Candidate ka jawab honest aur deep analysis kar. Interviewer ki tarah soch — kya yeh candidate hire karna chahoge?
 
 ## 📊 Score: X/10
-Honest score + ek line reason
+Honest score + ek line reason. 7+ = Strong, 5-6 = Average, below 5 = Needs work.
 
 ## ✅ Kya Acha Tha
-Specific strong points
+Specific strong points — exact lines quote karo candidate ke answer se.
 
-## ⚠️ Kya Miss Hua
-Specific weaknesses — actionable
+## ⚠️ Critical Gaps
+Kya miss hua jo ${role} interviewer expect karta hai. Specific aur actionable.
 
-## 💡 Expected Answer (Full Format)
-- Framework used (STAR/CIRCLES/etc.)
-- Key points jo cover hone chahiye the
-- Complete sample answer — 5-7 sentences — ready to memorize
+## 💡 Ideal Answer (Complete Format)
+- Framework: [STAR/CIRCLES/MECE/jo bhi best fit ho]
+- Must-cover points: [3-4 key elements jo answer mein hone chahiye the]
+- Sample Answer: [Complete 6-8 sentence answer jo top candidate deta — ready to memorize]
 
 ## 🔑 Power Line
-Ek line jo answer ko memorable banati hai
+Ek memorable closing line jo answer ko standout banati hai.
 
-Hinglish mein, honest aur helpful.`;
+Hinglish mein. Honest reh — false praise mat de.`;
 
   return callGroq(
-    `Question: ${question}\n\nCandidate Answer: ${answer}`,
-    system,
-    apiKey
+    `Role: ${role}\nInterview Type: ${type}\n\nQuestion: ${question}\n\nCandidate Answer: ${answer}`,
+    system, apiKey
   );
 }
 
-/**
- * Get ideal answer tips without candidate's answer
- */
+// ── Answer Tips ───────────────────────────────────────────────────────────────
 export async function getAnswerTips({ question, role, type, apiKey }) {
-  const system = `Tu ek expert interview coach hai — ${role}, ${type}.
+  const system = `Tu ek expert ${role} interview coach hai jo Indian freshers ko top companies mein place karta hai.
 
-## ❓ Question Breakdown
-Interviewer exactly kya dhundh raha hai
+Is question ka complete breakdown de — jaise ek mentor apne student ko samjhata hai.
+
+## ❓ Question Ka Asli Matlab
+Interviewer exactly kya assess kar raha hai — surface pe kya dikh raha hai vs. actually kya dhundha ja raha hai.
 
 ## 📋 Ideal Structure
-Step-by-step framework — STAR ya jo bhi best fit ho
+Step-by-step framework — STAR, CIRCLES, MECE — jo bhi best fit ho explain karo kyun.
 
 ## ✍️ Complete Sample Answer
-Ideal answer — 6-8 sentences, specific examples, ${role} language, numbers where possible
+7-8 sentences ka ideal answer — specific examples ke saath, numbers jahan possible ho, ${role} ke liye relevant context.
 
 ## ⚠️ 3 Common Mistakes
-Freshers jo galtiyan karte hain
+Indian freshers yeh galtiyan karte hain is question mein — specific aur real.
 
 ## 🔑 Power Phrase
-Ek memorable line
+Ek line jo answer ko memorable banaye — interviewer ke mind mein stick kare.
 
-Hinglish mein, complete aur actionable.`;
+Hinglish mein. Depth rakh — yeh student ki job lag sakti hai is answer se.`;
 
-  return callGroq(`Question: ${question}`, system, apiKey);
+  return callGroq(`Role: ${role}\nInterview Type: ${type}\n\nQuestion: ${question}`, system, apiKey);
 }
