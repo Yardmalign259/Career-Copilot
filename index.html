@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Career Copilot — For Indian Freshers</title>
   <meta name="description" content="AI-powered resume analyzer, JD matcher & mock interview for Indian PM/BA freshers. 100% free & private."/>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">  
-  
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg"/>
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -44,6 +44,7 @@
       <input class="field__input" type="password" id="api-key-input" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx"/>
     </div>
     <button class="btn btn--primary btn--full" id="save-api-btn">Save &amp; Start Using →</button>
+    <button class="btn btn--ghost btn--full" id="skip-api-btn" style="margin-top:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted);">Explore first, connect later →</button>
     <p class="modal__note">🔒 Key sirf tere browser mein save hogi — koi server pe nahi jaati</p>
   </div>
 </div>
@@ -106,17 +107,26 @@
         <div class="hero__eyebrow">✦ Free · Private · AI-Powered</div>
         <h1 class="hero__title">
           Your <span class="hero__title-gradient">Career Copilot</span><br/>
-          for PM &amp; BA Roles
+          for Every Role
         </h1>
         <p class="hero__sub">
           Resume analyze karo, JD match karo, aur real mock interview practice karo.
-          Sab kuch free — powered by Groq AI.
+          PM, BA, SDE, Data Science, SEO — sab ke liye. Free — powered by Groq AI.
         </p>
         <div class="hero__stats">
-          <div class="hero__stat"><div class="hero__stat-num">3</div><div class="hero__stat-lbl">AI Tools</div></div>
+          <div class="hero__stat"><div class="hero__stat-num">15+</div><div class="hero__stat-lbl">Job Roles</div></div>
           <div class="hero__stat"><div class="hero__stat-num">0₹</div><div class="hero__stat-lbl">Forever Free</div></div>
           <div class="hero__stat"><div class="hero__stat-num">~2s</div><div class="hero__stat-lbl">Response Time</div></div>
           <div class="hero__stat"><div class="hero__stat-num">100%</div><div class="hero__stat-lbl">Private</div></div>
+        </div>
+        <div style="margin-top:var(--space-5);display:flex;gap:var(--space-3);align-items:center;">
+          <a href="https://github.com/r4huldeveloper/Career-Copilot" target="_blank" rel="noopener"
+            style="display:inline-flex;align-items:center;gap:8px;font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-secondary);text-decoration:none;border:1px solid var(--color-border);padding:8px 16px;border-radius:var(--radius);background:var(--color-surface);transition:all var(--transition-base);"
+            onmouseover="this.style.borderColor='var(--color-text-primary)';this.style.color='var(--color-text-primary)'"
+            onmouseout="this.style.borderColor='var(--color-border)';this.style.color='var(--color-text-secondary)'">
+            ⭐ Star on GitHub
+          </a>
+          <span style="font-size:var(--text-xs);color:var(--color-text-muted);">Open source · MIT License</span>
         </div>
       </div>
 

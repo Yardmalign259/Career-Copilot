@@ -272,6 +272,9 @@ function init() {
   // ── API key modal ──
   $('save-api-btn')?.addEventListener('click', saveApiKey);
   $('api-key-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
+  $('skip-api-btn')?.addEventListener('click', () => {
+    apiModal.hide();
+  });
   document.querySelectorAll('[data-action="show-setup"]').forEach(el => {
     el.addEventListener('click', () => apiModal.show());
   });
