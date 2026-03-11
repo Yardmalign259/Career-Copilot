@@ -71,7 +71,7 @@ Score aur 2 line explanation kyun
 Aaj hi ye 3 cheezein change karo — exact suggestions do
 
 ## ✍️ Rewritten Bullets
-Koi bhi 2 bullets lo — before/after format mein strong PM/BA language mein rewrite karo
+Koi bhi 2 bullets lo — before/after format mein strong ${targetRole} language mein rewrite karo
 
 Hinglish mein jawab de. Direct aur actionable rakh. No fluff.`;
 
@@ -169,7 +169,7 @@ Interviewer exactly kya dhundh raha hai
 Step-by-step framework — STAR ya jo bhi best fit ho
 
 ## ✍️ Complete Sample Answer
-Ideal answer — 6-8 sentences, specific examples, PM/BA language, numbers where possible
+Ideal answer — 6-8 sentences, specific examples, ${role} language, numbers where possible
 
 ## ⚠️ 3 Common Mistakes
 Freshers jo galtiyan karte hain

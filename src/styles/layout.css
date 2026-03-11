@@ -233,11 +233,67 @@
 .page-title  { font-size: var(--text-2xl); font-weight: var(--weight-black); letter-spacing: -0.6px; margin-bottom: var(--space-1); }
 .page-desc   { font-size: var(--text-sm); color: var(--color-text-muted); }
 
+/* ── HAMBURGER BUTTON — hidden on desktop ────────────────── */
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: background var(--transition-base);
+}
+.hamburger:hover { background: var(--color-bg); }
+
+/* Sidebar overlay on mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 99;
+}
+.sidebar-overlay--visible { display: block; }
+
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { padding: var(--space-6) var(--space-5); }
+  /* Show hamburger in topbar */
+  .hamburger { display: flex; }
+
+  /* Sidebar becomes a drawer */
+  .sidebar {
+    position: fixed;
+    top: var(--topbar-height);
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar--open { transform: translateX(0); }
+
+  .main {
+    padding: var(--space-6) var(--space-4);
+    width: 100%;
+  }
+
   .hero__title { font-size: var(--text-2xl); }
-  .grid-2, .grid-2--asymmetric { grid-template-columns: 1fr; }
-  .hero__stats { overflow-x: auto; }
+  .hero__sub   { font-size: var(--text-base); }
+  .hero__stats { overflow-x: auto; width: 100%; }
+
+  .grid-2,
+  .grid-2--asymmetric { grid-template-columns: 1fr; }
+
+  /* Topbar badge hidden on small screens */
+  .topbar__badge { display: none; }
+
+  /* Progress steps scroll horizontally */
+  .progress-steps { overflow-x: auto; }
+  .progress-step  { min-width: 90px; }
 }
