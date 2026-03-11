@@ -19,12 +19,6 @@
 
 ---
 
-## 🖥️ Live Demo
-
-**[👉 https://career-copilot-seven.vercel.app/](#)** ← coming soon
-
----
-
 ## 🚀 Run Locally
 
 ### Prerequisites
