@@ -8,6 +8,8 @@
 
 ---
 
+**[👉 Live Demo](https://career-copilot-seven.vercel.app)**
+
 ## ✨ Features
 
 - **📄 Resume Analyzer** — ATS score, strengths/weaknesses, rewritten bullets in PM/BA language
