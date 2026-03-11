@@ -1,6 +1,6 @@
 # 🚀 Career Copilot
 
-> AI-powered resume analyzer, JD matcher & mock interview tool — built specifically for Indian PM/BA freshers.
+> AI-powered resume analyzer, JD matcher & mock interview tool — built specifically for Indian freshers.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Made for India](https://img.shields.io/badge/Made%20for-India%20🇮🇳-orange)](https://github.com/r4huldeveloper/Career-Copilot)
