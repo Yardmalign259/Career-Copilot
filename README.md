@@ -21,7 +21,7 @@
 
 ## 🖥️ Live Demo
 
-**[👉 career-copilot.vercel.app](#)** ← coming soon
+**[👉 https://career-copilot-seven.vercel.app/](#)** ← coming soon
 
 ---
 
