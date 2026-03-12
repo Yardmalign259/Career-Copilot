@@ -7,8 +7,9 @@
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen)](CONTRIBUTING.md)
 
 ---
+## 🎬 Demo
 
-**[👉 Live Demo](https://career-copilot-seven.vercel.app)**
+[![Watch Demo](https://img.shields.io/badge/▶%20Watch%20Full%20Demo-FF0000?style=for-the-badge&logo=loom)](https://www.loom.com/share/d04888ab5240409cbb4ad51d5df4048c)
 
 ## ✨ Features
 
