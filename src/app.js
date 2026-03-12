@@ -257,7 +257,9 @@ function init() {
     overlay?.classList.remove("sidebar-overlay--visible");
   }
 
-  hamburger?.addEventListener("click", openSidebar);
+  hamburger?.addEventListener("click", () => {
+    sidebar?.classList.contains("sidebar--open") ? closeSidebar() : openSidebar();
+  });
   overlay?.addEventListener("click", closeSidebar);
   document.querySelectorAll(".nav-item").forEach((item) => {
     item.addEventListener("click", () => { if (window.innerWidth <= 768) closeSidebar(); });
