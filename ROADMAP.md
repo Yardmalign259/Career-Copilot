@@ -19,6 +19,8 @@ The first version — built in 1 day, shipped because someone else needed it too
 | Interview session history (localStorage) | ✅ Shipped |
 | Open source — MIT License | ✅ Shipped |
 | GitHub — branch protection, PR template, issue templates | ✅ Shipped |
+| Floating Feedback Widget | ✅ Shipped |
+
 
 ---
 
