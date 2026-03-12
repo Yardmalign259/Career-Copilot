@@ -51,25 +51,33 @@ Then: right click `index.html` → **Open with Live Server**
 
 ```
 Career-Copilot/
-├── index.html              # Entry point — markup only, zero logic
-├── README.md
-└── src/
-    ├── app.js              # Main orchestrator
-    ├── api/
-    │   └── groq.js         # All AI API calls
-    ├── components/
-    │   ├── fileUpload.js   # Drag & drop upload
-    │   ├── modal.js        # Modal controller
-    │   └── progressBar.js  # Progress animations
-    ├── styles/
-    │   ├── variables.css   # Design tokens
-    │   ├── base.css        # Reset + globals
-    │   ├── components.css  # UI components
-    │   └── layout.css      # Page structure
-    └── utils/
-        ├── pdfParser.js    # PDF.js extraction
-        ├── markdown.js     # Markdown → HTML
-        └── storage.js      # LocalStorage wrapper
+├── .github/              # PR templates & GitHub configs
+├── assets/               # Demo videos and media
+├── src/
+│   ├── app.js            # Main orchestrator
+│   ├── api/
+│   │   └── groq.js       # All AI API calls
+│   ├── components/
+│   │   ├── fileUpload.js # Drag & drop upload
+│   │   ├── modal.js      # Modal controller
+│   │   └── progressBar.js # Progress animations
+│   ├── styles/
+│   │   ├── variables.css # Design tokens
+│   │   ├── base.css      # Reset + globals
+│   │   ├── components.css # UI components
+│   │   └── layout.css    # Page structure
+│   └── utils/
+│       ├── pdfParser.js  # PDF.js extraction
+│       ├── markdown.js   # Markdown -> HTML
+│       └── storage.js    # LocalStorage wrapper
+├── CONTRIBUTING.md       # Contribution guidelines
+├── LICENSE               # Project license
+├── README.md             # Project overview
+├── ROADMAP.md            # Future features & PDF plans
+├── favicon.svg           # Browser icon
+├── index.html            # Entry point - markup only
+├── logo.svg              # Project branding
+└── .gitignore            # Files to ignore in Git
 ```
 
 ---
