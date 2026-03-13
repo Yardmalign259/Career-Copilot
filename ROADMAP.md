@@ -28,7 +28,7 @@ The first version — built in 1 day, shipped because someone else needed it too
 
 | Feature | Status |
 |---------|--------|
-| Dark mode toggle | 🔨 Open for contribution |
+| Dark mode toggle | ✅ Shipped |
 | AI Role Fit Analyzer | 🔨 Open for contribution |
 | Mobile responsive layout | ✅ Shipped |
 | Resume score tracker over time | 🔨 Open for contribution |
