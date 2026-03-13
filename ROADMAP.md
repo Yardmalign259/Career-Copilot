@@ -1,11 +1,9 @@
 # 🗺️ Career Copilot — Roadmap
-
 > This is a living document. Updated as we ship and learn from users.
 
 ---
 
 ## ✅ What We've Built (v0.1.0)
-
 The first version — built in 1 day, shipped because someone else needed it too.
 
 | Feature | Status |
@@ -21,7 +19,6 @@ The first version — built in 1 day, shipped because someone else needed it too
 | GitHub — branch protection, PR template, issue templates | ✅ Shipped |
 | Floating Feedback Widget | ✅ Shipped |
 
-
 ---
 
 ## 🔨 In Progress (v0.2.0)
@@ -29,10 +26,16 @@ The first version — built in 1 day, shipped because someone else needed it too
 | Feature | Status |
 |---------|--------|
 | Dark mode toggle | ✅ Shipped |
-| AI Role Fit Analyzer | 🔨 Open for contribution |
 | Mobile responsive layout | ✅ Shipped |
-| Resume score tracker over time | 🔨 Open for contribution |
 | Feedback Button | ✅ Shipped |
+| `src/config.js` — centralized constants | 🔨 Open for contribution |
+| Replace `alert()` with modal UI messages | 🔨 Open for contribution |
+| Move `initFeedbackWidget()` inside `init()` | 🔨 Open for contribution |
+| Input sanitization — `feedback.js` + `app.js` | 🔨 Open for contribution |
+| `console.error` in all catch blocks | 🔨 Open for contribution |
+| Fix double `style` attribute on history-details | 🔨 Open for contribution |
+| AI Role Fit Analyzer | 🔨 Open for contribution |
+| Resume score tracker over time | 🔨 Open for contribution |
 
 ---
 
@@ -60,7 +63,6 @@ The first version — built in 1 day, shipped because someone else needed it too
 ---
 
 ## 💡 How to Contribute
-
 See something in the roadmap you want to build?
 
 1. Check [open issues](https://github.com/r4huldeveloper/Career-Copilot/issues) — find one labeled `good first issue`
@@ -72,7 +74,6 @@ Every contribution matters — from fixing a typo to shipping a full feature.
 ---
 
 ## 📊 Current Stats
-
 - 🌟 Live at [career-copilot-seven.vercel.app](https://career-copilot-seven.vercel.app)
 - 👥 Built for Indian freshers — PM, BA, SDE, Data Science, SEO, Design
 - 🔒 100% private — data never leaves your browser
