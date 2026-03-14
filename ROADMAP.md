@@ -34,8 +34,8 @@ The first version — built in 1 day, shipped because someone else needed it too
 | Input sanitization — `feedback.js` + `app.js` | ✅ Shipped |
 | `console.error` in all catch blocks | ✅ Shipped |
 | Fix double `style` attribute on history-details | ✅ Shipped |
-| AI Role Fit Analyzer | 🔨 Open for contribution |
-| Resume score tracker over time | 🔨 Open for contribution |
+| AI Role Fit Analyzer | ✅ Shipped |
+| Resume score tracker over time | ✅ Shipped |
 
 ---
 
