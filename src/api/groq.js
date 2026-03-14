@@ -1,36 +1,82 @@
 /**
  * groq.js — Groq API client
  * Single source of truth for all AI calls.
+ * Kyun: Sab AI logic ek jagah — easy to update prompts,
+ * model, or endpoint without touching other files.
  */
 
-const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
-const MODEL = 'llama-3.3-70b-versatile';
-const MAX_TOKENS = 3000;
+import { CONFIG } from "../config.js";
 
+/**
+ * Core Groq API caller — all AI functions use this
+ * @param {string} userPrompt
+ * @param {string} systemPrompt
+ * @param {string} apiKey
+ * @returns {Promise<string>}
+ */
 async function callGroq(userPrompt, systemPrompt, apiKey) {
-  if (!apiKey) throw new Error('API key missing');
-  const messages = [];
-  if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
-  messages.push({ role: 'user', content: userPrompt });
+  if (!apiKey) throw new Error("API key missing — pehle Groq key set karo");
 
-  const res = await fetch(GROQ_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({ model: MODEL, messages, max_tokens: MAX_TOKENS, temperature: 0.7 }),
-  });
+  const messages = [];
+  if (systemPrompt) messages.push({ role: "system", content: systemPrompt });
+  messages.push({ role: "user", content: userPrompt });
+
+  let res;
+  try {
+    res = await fetch(CONFIG.GROQ_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: CONFIG.GROQ_MODEL,
+        messages,
+        max_tokens: CONFIG.GROQ_MAX_TOKENS,
+        temperature: CONFIG.GROQ_TEMPERATURE,
+      }),
+    });
+  } catch (err) {
+    console.error("[groq] Network error:", err.message);
+    throw new Error("Network error — internet connection check karo");
+  }
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `HTTP ${res.status}`);
+    let errMsg = `HTTP ${res.status}`;
+    try {
+      const errData = await res.json();
+      errMsg = errData?.error?.message || errMsg;
+    } catch {
+      // JSON parse failed — use status code
+    }
+    console.error("[groq] API error:", res.status, errMsg);
+
+    // Specific errors — better UX
+    if (res.status === 401) throw new Error("Invalid API key — Groq dashboard se check karo");
+    if (res.status === 429) throw new Error("Rate limit — thodi der baad try karo");
+    if (res.status === 503) throw new Error("Groq service unavailable — baad mein try karo");
+    throw new Error(errMsg);
   }
-  const data = await res.json();
-  return data.choices[0].message.content;
+
+  try {
+    const data = await res.json();
+    return data.choices[0].message.content;
+  } catch (err) {
+    console.error("[groq] Response parse error:", err.message);
+    throw new Error("AI response parse nahi hua — dobara try karo");
+  }
 }
 
 // ── Resume Analyzer ──────────────────────────────────────────────────────────
+
+/**
+ * Analyze resume for a target role
+ * @param {object} params
+ * @param {string} params.resumeText
+ * @param {string} params.targetRole
+ * @param {string} params.apiKey
+ * @returns {Promise<string>}
+ */
 export async function analyzeResume({ resumeText, targetRole, apiKey }) {
   const system = `Tu ek world-class career coach aur ATS expert hai jo specifically Indian job market ke liye ${targetRole} roles mein specialize karta hai.
 
@@ -62,12 +108,25 @@ Resume se 3 weakest bullets lo aur ${targetRole} ke liye powerful metric-driven 
 ## 🎯 ${targetRole} — Role-Specific Gaps
 Is specific role ke liye kya missing hai — skills, tools, certifications, project types.
 
-Hinglish mein jawab de. Depth rakh — surface level advice mat de. 70B model ka poora knowledge use kar.`;
+Hinglish mein jawab de. Depth rakh — surface level advice mat de.`;
 
-  return callGroq(`Target Role: ${targetRole}\n\nResume:\n${resumeText.slice(0, 4000)}`, system, apiKey);
+  return callGroq(
+    `Target Role: ${targetRole}\n\nResume:\n${resumeText.slice(0, CONFIG.MAX_RESUME_LENGTH)}`,
+    system,
+    apiKey
+  );
 }
 
 // ── JD Matcher ───────────────────────────────────────────────────────────────
+
+/**
+ * Match resume against a job description
+ * @param {object} params
+ * @param {string} params.jdText
+ * @param {string} params.resumeText
+ * @param {string} params.apiKey
+ * @returns {Promise<string>}
+ */
 export async function matchJD({ jdText, resumeText, apiKey }) {
   const system = `Tu ek expert ATS specialist aur recruiter hai jo Indian companies ke liye hiring karta hai.
 
@@ -91,14 +150,28 @@ Honest score + ek line — main gap kya hai.
 Hinglish mein. Laser focused — sirf JD vs Resume comparison. No generic advice.`;
 
   return callGroq(
-    `JOB DESCRIPTION:\n${jdText.slice(0, 2500)}\n\nRESUME:\n${resumeText.slice(0, 3000)}`,
-    system, apiKey
+    `JOB DESCRIPTION:\n${jdText.slice(0, CONFIG.MAX_JD_LENGTH)}\n\nRESUME:\n${resumeText.slice(0, CONFIG.MAX_RESUME_LENGTH)}`,
+    system,
+    apiKey
   );
 }
 
 // ── Interview Question Generator ─────────────────────────────────────────────
+
+/**
+ * Generate an interview question for a role and type
+ * @param {object} params
+ * @param {string} params.role
+ * @param {string} params.type
+ * @param {boolean} params.forceNew
+ * @param {number} params.count
+ * @param {string} params.apiKey
+ * @returns {Promise<string>}
+ */
 export async function generateInterviewQuestion({ role, type, forceNew, count, apiKey }) {
-  const newText = forceNew ? `\nIMPORTANT: Pichle se BILKUL alag question do. Count: ${count}` : '';
+  const newText = forceNew
+    ? `\nIMPORTANT: Pichle se BILKUL alag question do. Count: ${count}`
+    : "";
 
   const system = `Tu ek senior interviewer hai jo ${role} ke liye Indian startups aur MNCs mein hiring karta hai. Type: ${type}.
 
@@ -113,6 +186,17 @@ FOCUS: [exactly kya assess ho raha hai — 4 words max]`;
 }
 
 // ── Answer Evaluator ──────────────────────────────────────────────────────────
+
+/**
+ * Evaluate a candidate's interview answer
+ * @param {object} params
+ * @param {string} params.question
+ * @param {string} params.answer
+ * @param {string} params.role
+ * @param {string} params.type
+ * @param {string} params.apiKey
+ * @returns {Promise<string>}
+ */
 export async function evaluateAnswer({ question, answer, role, type, apiKey }) {
   const system = `Tu ek strict but helpful ${role} interviewer hai jo Indian job market ke liye candidates evaluate karta hai.
 
@@ -138,12 +222,23 @@ Ek memorable closing line jo answer ko standout banati hai.
 Hinglish mein. Honest reh — false praise mat de.`;
 
   return callGroq(
-    `Role: ${role}\nInterview Type: ${type}\n\nQuestion: ${question}\n\nCandidate Answer: ${answer}`,
-    system, apiKey
+    `Role: ${role}\nInterview Type: ${type}\n\nQuestion: ${question}\n\nCandidate Answer: ${answer.slice(0, CONFIG.MAX_ANSWER_LENGTH)}`,
+    system,
+    apiKey
   );
 }
 
 // ── Answer Tips ───────────────────────────────────────────────────────────────
+
+/**
+ * Get tips and ideal answer for an interview question
+ * @param {object} params
+ * @param {string} params.question
+ * @param {string} params.role
+ * @param {string} params.type
+ * @param {string} params.apiKey
+ * @returns {Promise<string>}
+ */
 export async function getAnswerTips({ question, role, type, apiKey }) {
   const system = `Tu ek expert ${role} interview coach hai jo Indian freshers ko top companies mein place karta hai.
 
