@@ -21,7 +21,7 @@ The first version — built in 1 day, shipped because someone else needed it too
 
 ---
 
-## 🔨 In Progress (v0.2.0)
+## ✅ Completed (v0.2.0)
 
 | Feature | Status |
 |---------|--------|
