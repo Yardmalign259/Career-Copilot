@@ -14,3 +14,6 @@ Thumbs.db
 # Local env (never commit API keys)
 .env
 .env.local
+
+# memories
+.memories/
