@@ -984,3 +984,34 @@
   color: var(--color-text-secondary);
 }
 .what-youll-get__check { color: var(--color-green); }
+
+/* ============================================================
+   INLINE UTILS ADDED TO REPLACE INLINE STYLES
+   ============================================================ */
+.u-modal-step-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.u-text-center { text-align: center !important; }
+.u-text-muted { color: var(--color-text-muted) !important; }
+.u-text-sm { font-size: var(--text-sm) !important; }
+.u-small-text { font-size: var(--text-xs) !important; }
+.u-inline-error-text { font-size: var(--text-xs); color: var(--color-red); margin-top: var(--space-2); display: block; }
+.u-logo-icon { width: 22px; height: 22px; }
+.d-none { display: none !important; }
+.u-min-h-220 { min-height: 220px !important; }
+.u-min-h-160 { min-height: 160px !important; }
+.u-min-h-100 { min-height: 100px !important; }
+.u-icon-md { font-size: 20px !important; }
+.u-p-4 { padding: var(--space-4) !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mb-3 { margin-bottom: var(--space-3) !important; }
+.mb-4 { margin-bottom: var(--space-4) !important; }
+.mb-5 { margin-bottom: var(--space-5) !important; }
+.footer { border-top:1px solid var(--color-border); padding:var(--space-4) var(--space-6); display:flex; align-items:center; justify-content:space-between; background:var(--color-surface); }
+.footer-note { font-size:var(--text-xs); color:var(--color-text-muted); }
+.footer-links { display:flex; align-items:center; gap:var(--space-4); }
+.footer-link { font-size:var(--text-xs); font-weight:var(--weight-semibold); color:var(--color-text-muted); text-decoration:none; display:flex; align-items:center; gap:6px; }

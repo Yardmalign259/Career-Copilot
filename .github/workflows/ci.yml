@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js (npx tools ke liye)
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
 
       - name: Lint JavaScript
         run: npx eslint@latest src/**/*.js --ignore-pattern '**/pdf.js' || true
