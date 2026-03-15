@@ -80,23 +80,6 @@
 
 ---
 
-## 💡 How to Contribute
-
-1. Check [open issues](https://github.com/r4huldeveloper/Career-Copilot/issues) — find one labeled `good first issue`
-2. Comment — "I'd like to work on this"
-3. Fork → build → PR (follow [`AI_RULES.md`](.docs/AI_RULES.md) before submitting)
-
----
-
-## 📊 Stats
-
-- 🌟 Live at [career-copilot-seven.vercel.app](https://career-copilot-seven.vercel.app)
-- 👥 Built for Indian freshers — PM, BA, SDE, Data Science, SEO, Design
-- 🔒 100% private — data never leaves your browser
-- 💰 Forever free — BYOK model
-
----
-
 *Last updated: March 15, 2026*
 *Version: v0.3.0*
 *Built by [@r4huldeveloper](https://github.com/r4huldeveloper)*
