@@ -33,43 +33,7 @@
 </head>
 
 <body>
-  <!-- ── API KEY SETUP MODAL ───────────────────────────────────────────────── -->
-  <div class="overlay overlay--hidden" id="setup-overlay">
-    <div class="modal">
-      <div class="modal__icon">🔑</div>
-      <h2 class="modal__title">Groq API Key Setup</h2>
-      <p class="modal__desc">
-        Yeh app <strong>Groq ka free AI</strong> use karta hai — blazing fast,
-        koi cost nahi. Ek baar key set karo, phir hamesha kaam karega.
-      </p>
-      <div class="modal__steps">
-        <strong class="u-modal-step-label">Steps:</strong>
-        <ol class="mt-2">
-          <li>
-            Jao
-            <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a>
-          </li>
-          <li>Free account banao (Google se login kar sakte ho)</li>
-          <li><strong>API Keys</strong> section mein jao</li>
-          <li><strong>Create API Key</strong> click karo</li>
-          <li>Key copy karke neeche paste karo</li>
-        </ol>
-      </div>
-      <div class="field mb-4">
-        <label class="field__label">Groq API Key</label>
-        <input class="field__input" type="password" id="api-key-input" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="current-password">
-      </div>
-      <button type="button" class="btn btn--primary btn--full" id="save-api-btn">
-        Save &amp; Start Using →
-      </button>
-      <div id="api-key-error" class="hidden inline-error u-text-center"></div>
-      <button type="button" class="btn btn--ghost btn--full mt-2 u-text-sm u-text-muted" id="skip-api-btn">Explore first, connect
-        later →</button>
-      <p class="modal__note">
-        🔒 Key sirf tere browser mein save hogi — koi server pe nahi jaati
-      </p>
-    </div>
-  </div>
+  <!-- Setup overlay removed in v0.3.1 — API setup moved to Settings > API & Models panel -->
 
   <!-- ── TOPBAR ────────────────────────────────────────────────────────────── -->
 <header class="topbar">
@@ -119,8 +83,8 @@
       <div class="sidebar__divider"></div>
       <p class="sidebar__section-label">Settings</p>
 
-      <div class="nav-item" data-action="show-setup">
-        <span class="nav-item__icon">🔑</span> API Key
+      <div class="nav-item" data-action="show-setup" data-panel="apikey">
+        <span class="nav-item__icon">⚙</span> API &amp; Models
       </div>
 
       <div class="nav-item" id="nav-history" data-panel="history">
@@ -132,7 +96,7 @@
 
       <div class="sidebar__api-card hidden" id="sidebar-api-card">
         <strong>⚠️ API Key Missing</strong>
-        Groq key set karo tools use karne ke liye.
+        API key set karo tools use karne ke liye.
       </div>
     </nav>
 
@@ -310,9 +274,13 @@
                   <div class="what-youll-get__item"><span class="what-youll-get__check">✓</span> Rewritten bullets in role-specific language</div>
                   <div class="what-youll-get__item"><span class="what-youll-get__check">✓</span> Hinglish mein — easy to understand</div>
                 </div>
-                  <button type="button" class="btn btn--primary btn--full" id="resume-btn">🔍 Analyze Resume</button>
+                <button type="button" class="btn btn--primary btn--full" id="resume-btn">🔍 Analyze Resume</button>
                 <div class="loading-bar mt-3" id="resume-progress">
                   <div class="loading-bar__fill" id="resume-bar"></div>
+                </div>
+                <button type="button" class="btn btn--secondary btn--full mt-3" id="role-fit-btn">🎯 Find Best Roles</button>
+                <div class="loading-bar mt-3" id="role-fit-progress">
+                  <div class="loading-bar__fill" id="role-fit-bar"></div>
                 </div>
               </div>
             </div>
@@ -323,41 +291,18 @@
 
         <div class="result-box" id="resume-result">
           <div class="result-box__header">
-            <span class="result-box__title">📊 Analysis Results</span>
-            <span class="tag tag--green">Complete</span>
+            <span class="result-box__title" id="result-box-title">📊 Analysis Results</span>
+            <span class="tag tag--green" id="result-box-tag">Complete</span>
           </div>
           <div class="result-box__body" id="resume-result-content"></div>
         </div>
 
-        <!-- AI ROLE FIT — revealed after Resume Analyzer completes -->
-        <div id="role-fit-section" class="hidden mt-6">
-          <div class="card role-fit-card">
-            <div class="card__body">
-              <div class="role-fit-card__inner">
-                <div class="role-fit-card__icon">🎯</div>
-                <div class="flex-1">
-                  <div class="role-fit-card__title">AI Role Fit Analyzer</div>
-                  <p class="role-fit-card__desc">Pure AI se resume par analysis — batayega kaunse role best fit hain, gap map aur quick action plan. Resume analyze karte hi AI automatically role-fit result nikalta hai.</p>
-                  <button type="button" class="btn btn--primary" id="role-fit-btn">🎯 Find My Best Roles</button>
-                  <div class="loading-bar mt-3" id="role-fit-progress">
-                    <div class="loading-bar__fill" id="role-fit-bar"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div class="result-box hidden mt-4" id="role-fit-result">
+          <div class="result-box__header">
+            <span class="result-box__title">🎯 Role Fit Analysis</span>
+            <span class="tag tag--purple">AI Powered</span>
           </div>
-          <div class="role-fit-tabs hidden mt-4" id="role-fit-tabs">
-            <button type="button" class="btn btn--secondary btn--sm" id="view-resume-result-btn">📄 Resume Result</button>
-            <button type="button" class="btn btn--secondary btn--sm" id="view-role-fit-result-btn">🎯 Role Fit Result</button>
-          </div>
-
-          <div class="result-box mt-4" id="role-fit-result">
-            <div class="result-box__header">
-              <span class="result-box__title">🎯 Role Fit Analysis</span>
-              <span class="tag tag--purple">AI Powered</span>
-            </div>
-            <div class="result-box__body" id="role-fit-result-content"></div>
-          </div>
+          <div class="result-box__body" id="role-fit-result-content"></div>
         </div>
       </section>
 
@@ -568,6 +513,28 @@
           <button type="button" class="btn btn--secondary btn--sm" id="clear-scores-btn">Clear Scores</button>
         </div>
         <div id="score-tracker-list" class="mt-4"></div>
+      </section>
+      <!-- ── API & MODELS SETTINGS ────────────────────────────────────────── -->
+      <section class="panel" id="panel-apikey">
+        <div class="page-header">
+          <h2 class="page-title">API &amp; Provider</h2>
+          <p class="page-desc">Apna AI provider choose karo aur API key add karo. Key sirf tumhare browser mein rehti hai.</p>
+        </div>
+
+        <div class="apikey-page">
+
+          <!-- Providers — full width -->
+          <div class="apikey-page__section">
+            <p class="apikey-page__section-label">AI Provider</p>
+            <div id="provider-grid" class="provider-grid"></div>
+          </div>
+
+          <!-- Key panel — full width below -->
+          <div class="apikey-page__section mt-6">
+            <div id="key-panel"></div>
+          </div>
+
+        </div>
       </section>
     </main>
   </div>

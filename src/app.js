@@ -22,7 +22,8 @@ import { initFeedbackWidget }               from "./components/feedback.js";
 import { renderScoreTracker }               from "./components/scoreTracker.js";
 import { renderHistoryList }                from "./components/historyList.js";
 import {
-  getApiKey, setApiKey,
+  getApiKey, setApiKey, clearApiKey,
+  getProvider, setProvider,
   clearHistory, clearScores,
   getTheme, setTheme,
 }                                           from "./utils/storage.js";
@@ -30,7 +31,8 @@ import { parseMarkdown }                    from "./utils/markdown.js";
 import { sanitizeUserText }                 from "./utils/sanitize.js";
 import { startProgress, setProgressStep }   from "./components/progressBar.js";
 import { initDropZone }                     from "./components/fileUpload.js";
-import { createModal }                      from "./components/modal.js";
+import { initProviderPage }                 from "./components/providerPage.js";
+import { CONFIG }                           from "./config.js";
 
 // Pure Logic Layer imports (AI_RULES Rule 1 — Abstract Intelligence Core)
 import { runResumeAnalysis, runRoleFitAnalysis } from "./core/logic/resumeLogic.js";
@@ -44,6 +46,8 @@ import {
 // UI-only state — no business data, no AI results stored here
 const state = {
   apiKey:          "",
+  provider:        "",
+  model:           "",
   resumeText:      "",
   jdResumeText:    "",
   currentQuestion: "",
@@ -95,26 +99,6 @@ function showPanel(name) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function showRoleFitControls() {
-  $("role-fit-section")?.classList.remove("hidden");
-  $("role-fit-tabs")?.classList.remove("hidden");
-}
-
-function setRoleFitMode(mode) {
-  const resumeBox  = $("resume-result");
-  const roleFitBox = $("role-fit-result");
-  const tabs       = $("role-fit-tabs");
-  if (mode === "resume") {
-    resumeBox?.classList.add("result-box--visible");
-    roleFitBox?.classList.remove("result-box--visible");
-    tabs?.classList.remove("hidden");
-  } else if (mode === "roleFit") {
-    resumeBox?.classList.remove("result-box--visible");
-    roleFitBox?.classList.add("result-box--visible");
-    tabs?.classList.remove("hidden");
-  }
-}
-
 function addChatMsg(containerId, role, html) {
   const container = $(containerId);
   if (!container) return;
@@ -128,34 +112,53 @@ function addChatMsg(containerId, role, html) {
   container.lastElementChild.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// API Key
-const apiModal = createModal("setup-overlay");
-
+// API Key + Provider
 function updateConnectionStatus(connected) {
-  const dot    = $("api-dot");
-  const status = $("api-status");
-  const card   = $("sidebar-api-card");
+  const dot      = $("api-dot");
+  const statusEl = $("api-status");
+  const card     = $("sidebar-api-card");
+
   if (connected) {
+    const provider = CONFIG.PROVIDERS[getProvider()];
+    const label    = provider ? `${provider.name} Connected` : "Connected";
     dot?.classList.add("topbar__status-dot--connected");
-    if (status) { status.textContent = "Groq connected"; status.style.color = "var(--color-green)"; }
+    if (statusEl) {
+      statusEl.textContent = label;
+      statusEl.classList.add("topbar__status--connected");
+    }
     card?.classList.add("hidden");
   } else {
     dot?.classList.remove("topbar__status-dot--connected");
-    if (status) { status.textContent = "API not connected"; status.style.color = ""; }
+    if (statusEl) {
+      statusEl.textContent = "API not connected";
+      statusEl.classList.remove("topbar__status--connected");
+    }
     card?.classList.remove("hidden");
   }
 }
 
-function saveApiKey() {
-  const key = $v("api-key-input");
-  if (!key.startsWith("gsk_")) {
-    showError("api-key-error", 'Valid Groq API key "gsk_" se shuru hoti hai.');
-    return;
-  }
-  state.apiKey = key;
-  setApiKey(key);
-  apiModal.hide();
-  updateConnectionStatus(true);
+function initApiSettingsPage() {
+  const providerGrid = $("provider-grid");
+  const keyPanel     = $("key-panel");
+
+  if (!providerGrid || !keyPanel) return;
+
+  initProviderPage({
+    providerGrid,
+    keyPanel,
+    onSave(providerId, apiKey) {
+      setProvider(providerId);
+      setApiKey(apiKey);
+      state.apiKey   = apiKey;
+      state.provider = providerId;
+      updateConnectionStatus(true);
+    },
+    onDisconnect() {
+      clearApiKey();
+      state.apiKey = "";
+      updateConnectionStatus(false);
+    },
+  });
 }
 
 // Offline Banner
@@ -229,11 +232,13 @@ async function handleAnalyzeResume() {
     });
     stop();
     setProgressStep(["rs-1", "rs-2", "rs-3", "rs-4"], 4);
+
+    // Hide role-fit result, show only resume result
+    $("role-fit-result")?.classList.add("hidden");
+    $("role-fit-result")?.classList.remove("result-box--visible");
     showResult("resume-result", "resume-result-content", parseMarkdown(result));
     renderScoreTracker($("score-tracker-list"));
-    showRoleFitControls();
-    setRoleFitMode("resume");
-    await handleAnalyzeRoleFit();
+
   } catch (err) {
     stop();
     console.error("[app] handleAnalyzeResume:", err.message);
@@ -255,15 +260,19 @@ async function handleAnalyzeRoleFit() {
       apiKey:     state.apiKey,
     });
     stop();
+
+    // Hide resume result, show only role-fit result
+    $("resume-result")?.classList.remove("result-box--visible");
+    $("role-fit-result")?.classList.remove("hidden");
     showResult("role-fit-result", "role-fit-result-content", parseMarkdown(result));
-    setRoleFitMode("roleFit");
+
   } catch (err) {
     stop();
     console.error("[app] handleAnalyzeRoleFit:", err.message);
     showError("resume-error", err.message);
   }
 
-  setBtn("role-fit-btn", false, "🎯 Find My Best Roles");
+  setBtn("role-fit-btn", false, "🎯 Find Best Roles");
 }
 
 async function handleMatchJD() {
@@ -372,21 +381,32 @@ async function handleGetTips() {
 
 // Init
 function init() {
-  state.apiKey = getApiKey();
+  state.apiKey   = getApiKey();
+  state.provider = getProvider();
+
   updateConnectionStatus(!!state.apiKey);
-  if (!state.apiKey) apiModal.show();
 
+  // Panel navigation
   document.querySelectorAll("[data-panel]").forEach((el) =>
-    el.addEventListener("click", () => showPanel(el.dataset.panel))
+    el.addEventListener("click", () => {
+      showPanel(el.dataset.panel);
+      if (el.dataset.panel === "apikey") initApiSettingsPage();
+    })
   );
 
-  $("save-api-btn")?.addEventListener("click", saveApiKey);
-  $("skip-api-btn")?.addEventListener("click", () => apiModal.hide());
-  $("api-key-input")?.addEventListener("keydown", (e) => { if (e.key === "Enter") saveApiKey(); });
+  // data-action="show-setup" → go to API & Provider page
   document.querySelectorAll('[data-action="show-setup"]').forEach((el) =>
-    el.addEventListener("click", () => apiModal.show())
+    el.addEventListener("click", () => {
+      showPanel("apikey");
+      initApiSettingsPage();
+    })
   );
 
+  // Topbar status click → API & Provider page
+  $("api-status")?.addEventListener("click", () => { showPanel("apikey"); initApiSettingsPage(); });
+  $("api-dot")?.addEventListener("click",    () => { showPanel("apikey"); initApiSettingsPage(); });
+
+  // Feature buttons
   $("resume-btn")?.addEventListener("click", handleAnalyzeResume);
   $("role-fit-btn")?.addEventListener("click", handleAnalyzeRoleFit);
   $("jd-btn")?.addEventListener("click", handleMatchJD);
@@ -394,9 +414,6 @@ function init() {
   $("new-q-btn")?.addEventListener("click", () => handleGenerateQuestion(true));
   $("feedback-btn")?.addEventListener("click", handleGetFeedback);
   $("tips-btn")?.addEventListener("click", handleGetTips);
-
-  $("view-resume-result-btn")?.addEventListener("click", () => setRoleFitMode("resume"));
-  $("view-role-fit-result-btn")?.addEventListener("click", () => setRoleFitMode("roleFit"));
 
   initDropZone({ zoneId: "resume-drop-zone", inputId: "resume-file-input", fileNameId: "resume-file-name", onExtract: (text) => { state.resumeText = text; } });
   initDropZone({ zoneId: "jd-drop-zone",     inputId: "jd-file-input",     fileNameId: "jd-file-name",     onExtract: (text) => { state.jdResumeText = text; } });
@@ -430,6 +447,14 @@ function init() {
 
   initOfflineDetection();
   initFeedbackWidget();
+
+  // New user (no API key) → show a subtle banner, NOT force redirect.
+  // User lands on Home first — if they want to connect, sidebar "API & Models" is right there.
+  // initApiSettingsPage() is called lazily only when user navigates to panel-apikey.
+  if (!state.apiKey) {
+    // Sidebar API missing card is already visible (HTML default) — no extra action needed.
+    // Do NOT redirect away from home. User should see what the app does first.
+  }
 }
 
 document.addEventListener("DOMContentLoaded", init);

@@ -1,85 +1,74 @@
 /**
  * storage.js — LocalStorage wrapper
  * Single source of truth for ALL browser storage.
- * Kyun: Direct localStorage calls scattered the codebase mein —
- * theme localStorage.setItem directly app.js mein tha.
- * Ab sab storage yahan se jaata hai — consistent, logged, safe.
+ * All keys defined once here — never scattered across files.
  */
 
 import { CONFIG } from "../config.js";
 
-// ── Storage Keys — ek jagah, never scattered ──────────────────────────────────
-const KEYS = {
-  API_KEY: "cc_groq_key",
-  HISTORY: "cc_interview_history",
-  SCORES:  "cc_ats_scores",
-  THEME:   "theme",
-};
+// ── Backward Compatibility — v0.2.0 → v0.3.1 migration ──────────────────────
+// v0.2.0 stored API key under "cc_groq_key".
+// v0.3.1 changed to "cc_api_key" (provider-agnostic).
+// On first load after upgrade: migrate old key silently, then delete old key.
+// This runs once — after migration cc_groq_key is gone.
 
-// ── Simple Encoding Helpers (avoid cleartext at rest) ────────────────────────
-
-/**
- * Encode a string for storage.
- * Note: Uses Base64 to avoid storing sensitive values in cleartext.
- * This is not strong cryptography, but reduces direct exposure in storage.
- * @param {string} value
- * @returns {string}
- */
-function encode(value) {
+function _migrateV02Key() {
   try {
-    // Handle UTF-8 safely before btoa
-    return btoa(unescape(encodeURIComponent(value)));
-  } catch {
-    return value;
-  }
+    const oldKey = localStorage.getItem("cc_groq_key");
+    if (!oldKey) return;
+    const newKey = localStorage.getItem("cc_api_key");
+    if (!newKey) {
+      // Migrate old key to new location
+      localStorage.setItem("cc_api_key", oldKey);
+      // Also set provider to groq since that's what they were using
+      if (!localStorage.getItem("cc_provider")) {
+        localStorage.setItem("cc_provider", "groq");
+      }
+    }
+    // Always remove old key after migration attempt
+    localStorage.removeItem("cc_groq_key");
+  } catch { /* silent — private mode */ }
 }
 
-/**
- * Decode a value previously encoded with encode().
- * @param {string|null} value
- * @returns {string|null}
- */
+// Run migration immediately on module load
+_migrateV02Key();
+
+// ── Storage Keys ──────────────────────────────────────────────────────────────
+const KEYS = {
+  API_KEY:  "cc_api_key",      // encoded API key (provider-agnostic)
+  PROVIDER: "cc_provider",     // selected provider id e.g. "groq"
+  MODEL:    "cc_model",        // selected model id e.g. "llama-3.3-70b-versatile"
+  HISTORY:  "cc_interview_history",
+  SCORES:   "cc_ats_scores",
+  THEME:    "theme",
+};
+
+// ── Encoding Helpers ──────────────────────────────────────────────────────────
+// Base64 to avoid cleartext API keys at rest. Not cryptography — just obfuscation.
+
+function encode(value) {
+  try { return btoa(unescape(encodeURIComponent(value))); }
+  catch { return value; }
+}
+
 function decode(value) {
   if (value == null) return value;
-  try {
-    return decodeURIComponent(escape(atob(value)));
-  } catch {
-    // Not encoded or corrupt; return as-is
-    return value;
-  }
+  try { return decodeURIComponent(escape(atob(value))); }
+  catch { return value; }
 }
 
 // ── Core Wrapper ──────────────────────────────────────────────────────────────
+// Gracefully handles private/incognito mode and quota exceed errors.
 
-/**
- * Safe localStorage wrapper with error logging
- * Kyun wrapper: Direct localStorage throws in private/incognito mode
- * aur quota exceed pe — wrapper gracefully handle karta hai
- */
 export const storage = {
-  /**
-   * @param {string} key
-   * @returns {string|null}
-   */
   get(key) {
     try { return localStorage.getItem(key); }
     catch (err) { console.error("[storage] get failed:", key, err.message); return null; }
   },
-
-  /**
-   * @param {string} key
-   * @param {string} value
-   * @returns {boolean}
-   */
   set(key, value) {
     try { localStorage.setItem(key, value); return true; }
     catch (err) { console.error("[storage] set failed:", key, err.message); return false; }
   },
-
-  /**
-   * @param {string} key
-   * @returns {boolean}
-   */
   remove(key) {
     try { localStorage.removeItem(key); return true; }
     catch (err) { console.error("[storage] remove failed:", key, err.message); return false; }
@@ -88,41 +77,66 @@ export const storage = {
 
 // ── API Key ───────────────────────────────────────────────────────────────────
 
-/** @returns {string} Stored Groq API key or empty string */
-export const getApiKey  = () => {
-  const stored = storage.get(KEYS.API_KEY);
-  const decoded = decode(stored);
-  return decoded || "";
-};
+/** @returns {string} Stored API key or empty string */
+export const getApiKey   = () => decode(storage.get(KEYS.API_KEY)) || "";
 
-/** @param {string} key — Groq API key to persist */
-export const setApiKey  = (key) => storage.set(KEYS.API_KEY, encode(key));
+/** @param {string} key — API key to persist (encoded) */
+export const setApiKey   = (key) => storage.set(KEYS.API_KEY, encode(key));
 
 /** Remove stored API key */
 export const clearApiKey = () => storage.remove(KEYS.API_KEY);
 
-// ── Theme ─────────────────────────────────────────────────────────────────────
-// Kyun yahan: app.js mein localStorage.setItem("theme") directly tha —
-// inconsistent. Ab sab storage ek jagah se.
+// ── Provider ──────────────────────────────────────────────────────────────────
 
 /**
- * Get saved theme preference
- * @returns {"dark"|"light"|null}
+ * Get saved provider id
+ * @returns {string} e.g. "groq" | "openai" | "gemini" | "mistral"
  */
+export const getProvider = () => storage.get(KEYS.PROVIDER) || CONFIG.DEFAULT_PROVIDER;
+
+/**
+ * Save provider id
+ * @param {string} providerId
+ */
+export const setProvider = (providerId) => storage.set(KEYS.PROVIDER, providerId);
+
+// ── Model ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Get saved model id for current provider
+ * Falls back to provider's defaultModel if not set
+ * @returns {string}
+ */
+export function getModel() {
+  const provider  = getProvider();
+  const saved     = storage.get(KEYS.MODEL);
+  const providerCfg = CONFIG.PROVIDERS[provider];
+  if (!providerCfg) return "";
+  // Validate saved model belongs to current provider — prevents cross-provider bleed
+  const validIds = providerCfg.models.map((m) => m.id);
+  if (saved && validIds.includes(saved)) return saved;
+  return providerCfg.defaultModel || "";
+}
+
+/**
+ * Save model id
+ * @param {string} modelId
+ */
+export const setModel = (modelId) => storage.set(KEYS.MODEL, modelId);
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+
+/** @returns {"dark"|"light"|null} */
 export const getTheme = () => storage.get(KEYS.THEME);
 
-/**
- * Save theme preference
- * @param {"dark"|"light"} theme
- */
+/** @param {"dark"|"light"} theme */
 export const setTheme = (theme) => storage.set(KEYS.THEME, theme);
 
 // ── Interview Session History ─────────────────────────────────────────────────
 
 /**
  * Save interview session — capped at CONFIG.MAX_HISTORY_SESSIONS
- * Kyun cap: Unbounded growth would hit 5MB localStorage limit
- * @param {object} session — { date, role, type, question, answer, feedback, score }
+ * @param {object} session
  */
 export function saveSession(session) {
   try {
@@ -138,10 +152,7 @@ export function saveSession(session) {
   }
 }
 
-/**
- * Get all saved sessions, newest first
- * @returns {object[]}
- */
+/** @returns {object[]} All sessions, newest first */
 export function getHistory() {
   try {
     const raw = storage.get(KEYS.HISTORY);
@@ -158,8 +169,7 @@ export const clearHistory = () => storage.remove(KEYS.HISTORY);
 // ── ATS Score Tracker ─────────────────────────────────────────────────────────
 
 /**
- * Save ATS score entry after each Resume Analyzer run
- * Capped at 100 — score trend se zyada data needed nahi
+ * Save ATS score entry — capped at 100
  * @param {{ date: string, role: string, atsScore: number }} entry
  */
 export function saveScore(entry) {
@@ -174,10 +184,7 @@ export function saveScore(entry) {
   }
 }
 
-/**
- * Get all saved ATS scores, newest first
- * @returns {{ date: string, role: string, atsScore: number }[]}
- */
+/** @returns {{ date: string, role: string, atsScore: number }[]} */
 export function getScores() {
   try {
     const raw = storage.get(KEYS.SCORES);

@@ -99,6 +99,8 @@ import {
   saveSession, getHistory, clearHistory,
   saveScore, getScores, clearScores,
   getTheme, setTheme,
+  getProvider, setProvider,
+  getModel, setModel,
 } from "./utils/storage.js";
 
 function testStorage() {
@@ -160,7 +162,88 @@ function testStorage() {
   console.groupEnd();
 }
 
-// ── ATS Score Parser tests ────────────────────────────────────────────────────
+// ── provider + model storage tests ───────────────────────────────────────────
+
+function testProviderStorage() {
+  console.group("🔌 provider + model storage");
+
+  // Default provider
+  localStorage.removeItem("cc_provider");
+  localStorage.removeItem("cc_model");
+  assertEqual("getProvider default is groq", getProvider(), "groq");
+
+  // setProvider / getProvider round-trip
+  setProvider("openai");
+  assertEqual("setProvider openai", getProvider(), "openai");
+
+  setProvider("gemini");
+  assertEqual("setProvider gemini", getProvider(), "gemini");
+
+  setProvider("mistral");
+  assertEqual("setProvider mistral", getProvider(), "mistral");
+
+  // Reset to groq for model tests
+  setProvider("groq");
+
+  // getModel falls back to provider defaultModel when nothing saved
+  localStorage.removeItem("cc_model");
+  const defaultModel = getModel();
+  assert("getModel returns non-empty default", defaultModel.length > 0);
+
+  // setModel / getModel round-trip
+  setModel("llama-3.1-8b-instant");
+  assertEqual("setModel + getModel round-trip", getModel(), "llama-3.1-8b-instant");
+
+  // Cross-provider bleed prevention — saved Groq model should NOT
+  // be returned when provider is switched to OpenAI
+  setProvider("openai");
+  const modelAfterSwitch = getModel();
+  assert(
+    "Cross-provider bleed: groq model not returned for openai",
+    modelAfterSwitch !== "llama-3.1-8b-instant"
+  );
+  assert("OpenAI default model returned instead", modelAfterSwitch.length > 0);
+
+  // Cleanup
+  localStorage.removeItem("cc_provider");
+  localStorage.removeItem("cc_model");
+
+  console.groupEnd();
+}
+
+// ── v0.2.0 → v0.3.1 migration test ───────────────────────────────────────────
+
+function testV02Migration() {
+  console.group("🔄 v0.2.0 → v0.3.1 migration");
+
+  // Simulate v0.2.0 state: key stored under old name
+  localStorage.removeItem("cc_api_key");
+  localStorage.removeItem("cc_provider");
+  localStorage.setItem("cc_groq_key", btoa(unescape(encodeURIComponent("gsk_migrated_key"))));
+
+  // Re-import won't re-run, so manually invoke the migration logic here
+  try {
+    const oldKey = localStorage.getItem("cc_groq_key");
+    if (oldKey && !localStorage.getItem("cc_api_key")) {
+      localStorage.setItem("cc_api_key", oldKey);
+      if (!localStorage.getItem("cc_provider")) {
+        localStorage.setItem("cc_provider", "groq");
+      }
+    }
+    localStorage.removeItem("cc_groq_key");
+  } catch { /* silent */ }
+
+  assert("Old cc_groq_key removed after migration", !localStorage.getItem("cc_groq_key"));
+  assert("New cc_api_key present after migration",  !!localStorage.getItem("cc_api_key"));
+  assertEqual("Provider set to groq after migration", localStorage.getItem("cc_provider"), "groq");
+  assertEqual("getApiKey returns migrated key", getApiKey(), "gsk_migrated_key");
+
+  // Cleanup
+  clearApiKey();
+  localStorage.removeItem("cc_provider");
+
+  console.groupEnd();
+}
 // Tests for parseAtsScore logic (inline — not exported, so we replicate logic)
 
 function parseAtsScore(text) {
@@ -367,6 +450,8 @@ export async function runTests() {
 
   testMarkdown();
   testStorage();
+  testProviderStorage();
+  testV02Migration();
   testAtsScoreParser();
   testSanitizeUserText();
   await testCallGroqCircuitBreaker();
