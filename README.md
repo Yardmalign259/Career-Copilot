@@ -56,13 +56,13 @@ Career Copilot follows a strict **4-layer architecture**. Every layer has exactl
 ┌───────────────────────────▼──────────────────────────────────┐
 │                    Pure Logic Layer                          │
 │   src/core/logic/resumeLogic.js    — Resume + Role Fit       │
-│   src/core/logic/jdLogic.js        — JD Matcher             │
-│   src/core/logic/interviewLogic.js — Interview flows        │
-│   src/core/logic/sessionState.js   — Runtime state          │
+│   src/core/logic/jdLogic.js        — JD Matcher              │
+│   src/core/logic/interviewLogic.js — Interview flows         │
+│   src/core/logic/sessionState.js   — Runtime state           │
 │                                                              │
 │   Zero DOM · Zero CSS · Plain data in → plain data out       │
 │   Portable to React Native / Electron / Node with 0 rewrites │
-└──────────┬────────────────────────────┬─────────────────────┘
+└──────────┬────────────────────────────┬──────────────────────┘
            │ calls                      │ reads/writes
 ┌──────────▼────────────┐   ┌───────────▼──────────────────────┐
 │   AI Provider Layer   │   │       Data / Utils Layer         │
@@ -127,66 +127,6 @@ Then: right-click `index.html` → **Open with Live Server**
 1. Go to [console.groq.com](https://console.groq.com)
 2. Sign up free → **API Keys** → **Create API Key**
 3. Paste in the app when prompted — stored only in your browser, never sent anywhere
-
----
-
-## 📁 Project Structure
-
-```
-Career-Copilot/
-├── .docs/
-│   ├── architecture.md          # Full architecture + data flow + diagrams
-│   └── AI_RULES.md              # Coding protocol for contributors and AI agents
-├── .github/                     # PR templates & GitHub configs
-├── assets/                      # Banner, demo media
-├── src/
-│   ├── app.js                   # UI Shell — events + DOM only, zero business logic
-│   ├── config.js                # App-wide constants (non-secret, safe to commit)
-│   ├── tests.js                 # Unit tests — sanitize, circuit breaker, parsers
-│   │
-│   ├── adapters/
-│   │   └── aiProvider.js        # GroqAdapter — switch AI provider in 1 file
-│   │
-│   ├── api/
-│   │   └── groq.js              # HTTP client + circuit breaker + session cache
-│   │
-│   ├── components/
-│   │   ├── feedback.js          # Feedback widget
-│   │   ├── fileUpload.js        # Drag & drop upload handler
-│   │   ├── historyList.js       # Interview history renderer
-│   │   ├── modal.js             # Modal controller
-│   │   ├── progressBar.js       # Progress bar animations
-│   │   └── scoreTracker.js      # ATS score history renderer
-│   │
-│   ├── core/
-│   │   └── logic/               # ← Pure Logic Layer (zero DOM, fully portable)
-│   │       ├── resumeLogic.js   # runResumeAnalysis(), runRoleFitAnalysis(), parseAtsScore()
-│   │       ├── jdLogic.js       # runJdMatch()
-│   │       ├── interviewLogic.js # runGenerateQuestion(), runEvaluateAnswer(), runGetAnswerTips()
-│   │       └── sessionState.js  # In-memory runtime state
-│   │
-│   ├── prompts/
-│   │   └── groqPrompts.js       # Structured prompt templates — output contract enforced
-│   │
-│   ├── styles/
-│   │   ├── variables.css        # Design tokens
-│   │   ├── base.css             # Reset + globals
-│   │   ├── components.css       # UI components
-│   │   └── layout.css           # Page structure
-│   │
-│   └── utils/
-│       ├── sanitize.js          # Input sanitization gate — all text passes through here
-│       ├── storage.js           # localStorage wrapper + encoding + ATS scores + history
-│       ├── markdown.js          # Lightweight markdown → safe HTML parser
-│       └── pdfParser.js         # PDF.js text extraction
-│
-├── index.html                   # Entry point — structural lock, never alter IDs/classes
-├── README.md
-├── ROADMAP.md
-├── CONTRIBUTING.md
-├── LICENSE
-└── vercel.json
-```
 
 ---
 
