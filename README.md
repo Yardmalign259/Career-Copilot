@@ -163,18 +163,8 @@ Then: right-click `index.html` → **Open with Live Server**
 
 ## 🤝 Contributing
 
-Contributions welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) first, then check [AI_RULES.md](.docs/AI_RULES.md) — every PR must pass the Zero-Escape 5-point audit.
+Contributions welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) first — every PR must pass the Zero-Escape 5-point audit.
 
-**Good first issues:**
-- [ ] Add Gemini API support (1-file change in `aiProvider.js`)
-- [ ] Add more interview question types
-- [ ] Improve mobile layout
-- [x] Dark mode
-- [x] Save interview history locally
-- [x] ATS Score Tracker
-- [x] AI Role Fit Analyzer
-
----
 
 ## 📜 License
 
