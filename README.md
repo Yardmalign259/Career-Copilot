@@ -13,8 +13,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Made for India](https://img.shields.io/badge/Made%20for-India%20🇮🇳-orange)](https://github.com/r4huldeveloper/Career-Copilot)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen)](CONTRIBUTING.md)
-[![Version](https://img.shields.io/badge/version-0.3.0-purple)](CHANGELOG.md)
-[![Zero Backend](https://img.shields.io/badge/backend-zero-success)](https://github.com/r4huldeveloper/Career-Copilot)
+[![Version](https://img.shields.io/badge/version-0.4.0-purple)](CHANGELOG.md)
+[![Zero Backend](https://img.shields.io/badge/backend-Cloudflare%20Workers-orange)](https://github.com/r4huldeveloper/Career-Copilot)
 
 </div>
 
@@ -139,6 +139,7 @@ Then: right-click `index.html` → **Open with Live Server**
 | PDF.js (CDN) | Client-side PDF text extraction |
 | Groq API + Llama 3.3 70B | AI inference (~2s response time) |
 | Vercel | Zero-config static deployment |
+| Cloudflare Workers + D1 | Anonymous global stats counter — free tier, zero PII, never pauses |
 
 ---
 
@@ -146,7 +147,7 @@ Then: right-click `index.html` → **Open with Live Server**
 
 - **BYOK (Bring Your Own Key):** Your Groq API key is stored only in your browser's localStorage, Base64-encoded. Never transmitted to any server other than Groq directly.
 - **Sanitization Gate:** All user inputs pass through `src/utils/sanitize.js` before any processing. All AI output is HTML-escaped before rendering.
-- **No PII on server:** Zero user data, zero analytics, zero third-party tracking.
+- **No PII on server:** The only backend (Cloudflare Worker) stores zero PII — only anonymous counts and role/model names. No resume text, no API keys, no IP addresses ever touch the Worker database.
 - **Circuit Breaker:** If Groq API fails 3 times in 60s, requests are blocked for 30s — the app stays fully functional.
 
 ---

@@ -17,3 +17,5 @@ Thumbs.db
 
 # memories
 .docs/
+.wrangler/
+

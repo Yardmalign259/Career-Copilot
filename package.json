@@ -1,0 +1,21 @@
+{
+  "name": "career-copilot",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">\r   <img src=\"assets/banner.png\" alt=\"Career Copilot Banner\" width=\"100%\"/>\r </div>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/r4huldeveloper/Career-Copilot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/r4huldeveloper/Career-Copilot/issues"
+  },
+  "homepage": "https://github.com/r4huldeveloper/Career-Copilot#readme"
+}

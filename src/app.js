@@ -19,6 +19,7 @@
  */
 
 import { initFeedbackWidget }               from "./components/feedback.js";
+import { initStatsPanel, trackEvent }       from "./components/statsPanel.js";
 import { renderScoreTracker }               from "./components/scoreTracker.js";
 import { renderHistoryList }                from "./components/historyList.js";
 import {
@@ -241,6 +242,8 @@ async function handleAnalyzeResume() {
     $("role-fit-result")?.classList.remove("result-box--visible");
     showResult("resume-result", "resume-result-content", parseMarkdown(result));
     renderScoreTracker($("score-tracker-list"));
+    initStatsPanel();
+    trackEvent('resume', sanitizeUserText($v("resume-role")), getModel());
 
   } catch (err) {
     stop();
@@ -289,6 +292,7 @@ async function handleMatchJD() {
     const result = await runJdMatch({ jdText, resumeText, apiKey: state.apiKey });
     stop();
     showResult("jd-result", "jd-result-content", parseMarkdown(result));
+    trackEvent('jd', 'JD Match', getModel());
   } catch (err) {
     stop();
     console.error("[app] handleMatchJD:", err.message);
@@ -350,6 +354,7 @@ async function handleGetFeedback() {
     stop();
     addChatMsg("chat-container", "ai", parseMarkdown(rawMarkdown));
     renderHistoryList($("history-list"));
+    trackEvent('interview', $v("int-role"), getModel());
   } catch (err) {
     stop();
     console.error("[app] handleGetFeedback:", err.message);
@@ -426,6 +431,7 @@ function init() {
 
   renderHistoryList($("history-list"));
   renderScoreTracker($("score-tracker-list"));
+  initStatsPanel();
 
   const hamburger      = $("hamburger-btn");
   const sidebar        = document.querySelector(".sidebar");

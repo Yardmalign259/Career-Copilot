@@ -1,0 +1,12 @@
+name = "career-copilot-api"
+main = "worker/src/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "career-copilot-db"
+database_id = "85737dae-5b9d-410a-93f2-b78c9fb0a1cd"
+
+[vars]
+ALLOWED_ORIGIN = "https://careercopilot.in"

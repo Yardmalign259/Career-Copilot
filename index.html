@@ -22,6 +22,8 @@
   <link rel="stylesheet" href="src/styles/base.css">
   <link rel="stylesheet" href="src/styles/components.css">
   <link rel="stylesheet" href="src/styles/layout.css">
+  <link rel="stylesheet" href="src/styles/statsPanel.css">
+  <link rel="stylesheet" href="src/styles/statsPanel.css">
 
   <!-- Vercel Analytics -->
   <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
@@ -103,6 +105,8 @@
     <main class="main">
       <!-- ── HOME ──────────────────────────────────────────────────────── -->
       <section class="panel panel--active" id="panel-home">
+
+        <!-- Hero — full width -->
         <div class="hero">
           <div class="hero__eyebrow">✦ Free · Private · AI-Powered</div>
           <h1 class="hero__title">
@@ -133,6 +137,10 @@
           </div>
         </div>
 
+        <!-- Stats panel — full width -->
+        <div id="stats-panel-root"></div>
+
+        <!-- Feature cards — full width -->
         <div class="grid-2">
           <div class="card card--clickable" data-panel="resume">
             <div class="card__body">
@@ -167,6 +175,7 @@
             </div>
           </div>
         </div>
+
       </section>
 
       <!-- ── RESUME ANALYZER ────────────────────────────────────────────── -->

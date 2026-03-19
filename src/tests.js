@@ -435,6 +435,22 @@ function testHistoryList() {
   console.groupEnd();
 }
 
+// ── statsPanel.js tests ───────────────────────────────────────────────────────
+
+import { stripRelativeTime } from "./components/statsPanel.js";
+
+function testStatsPanel() {
+  console.group("📊 statsPanel.js");
+
+  // stripRelativeTime
+  assertEqual("just now under 60s",    stripRelativeTime(Date.now() - 30_000),    'just now');
+  assertEqual("2m ago",                stripRelativeTime(Date.now() - 120_000),   '2m ago');
+  assertEqual("1h ago",                stripRelativeTime(Date.now() - 3_600_000), '1h ago');
+  assertEqual("2h ago",                stripRelativeTime(Date.now() - 7_200_000), '2h ago');
+
+  console.groupEnd();
+}
+
 // ── Main Runner ───────────────────────────────────────────────────────────────
 
 /**
@@ -458,6 +474,7 @@ export async function runTests() {
   testEscapeHtml();
   testScoreTracker();
   testHistoryList();
+  testStatsPanel();
 
   console.groupEnd();
 
